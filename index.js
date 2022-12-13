@@ -17,6 +17,7 @@ async function run() {
     try {
         const productCategoriesCollection = client.db('mobileSite').collection('productCategories');
         const productCollection = client.db('mobileSite').collection('products');
+        const ordersCollection = client.db('mobileSite').collection('orders');
 
 
         app.get('/categories', async (req, res) => {
@@ -38,10 +39,24 @@ async function run() {
 
         app.get('/productsDetails/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: ObjectId(id) } 
+            const query = { _id: ObjectId(id) }
             const products = await productCollection.findOne(query)
             res.send(products)
         })
+
+        app.post('/booking', async (req, res) => {
+            const id = req.body;
+            const result = await ordersCollection.insertOne(id);
+            res.send(result)
+        })
+
+        app.get('/booking', async (req, res) => {
+            const query = {}
+            const orders = await ordersCollection.find(query).toArray()
+            res.send(orders)
+
+        })
+
 
 
     }
