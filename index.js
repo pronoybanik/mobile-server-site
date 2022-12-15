@@ -16,6 +16,24 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@clu
 // console.log(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+function verifyJWT(req, res, next) {
+    // console.log(req.headers.authorization);
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send('unauthorized access..')
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+        if (err) {
+            return res.status(403).send({ message: 'forbidden access' })
+        }
+        req.decoded = decoded;
+        next();
+    })
+
+}
+
 async function run() {
     try {
         const productCategoriesCollection = client.db('mobileSite').collection('productCategories');
@@ -37,7 +55,7 @@ async function run() {
             const query = { category_id: id }
             const products = await productCollection.find(query).toArray()
             // console.log(products);
-            res.send(products)
+            res.send(products);
 
         });
 
@@ -55,16 +73,23 @@ async function run() {
             const result = await ordersCollection.insertOne(id);
             res.send(result)
         });
- 
+
         // product GET API
 
-        app.get('/booking', async (req, res) => {
-            const query = {}
+        app.get('/booking', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            const decodeEmail = req.decoded.email;
+
+            if (email !== decodeEmail) {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            const query = { email: email }
             const orders = await ordersCollection.find(query).toArray()
             res.send(orders)
 
         });
 
+        // products delate id
         app.delete('/booking/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
@@ -80,7 +105,7 @@ async function run() {
             const query = { email: email }
             const user = await userCollection.findOne(query);
             if (user) {
-                const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' })
+                const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10h' })
                 return res.send({ accessToken: token })
             }
             // console.log(user);
@@ -93,6 +118,36 @@ async function run() {
             const users = await userCollection.insertOne(id);
             res.send(users);
         });
+
+        // admin create system 
+
+        app.get('/user/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await userCollection.findOne(query)
+            res.send({ isAdmin: user?.Role === 'admin' })
+
+        })
+
+        app.get('/user/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await userCollection.findOne(query)
+            res.send({ isSeller: user?.Role === 'seller' })
+
+        })
+
+        // all user neoa hoyeche
+
+        // app.get('/user', async (req, res) => {
+        //     const role = req.query.Role
+        //     // console.log(role);
+        //     const query = { role: role - 1}
+        //     const result = await userCollection.find(query).toArray()
+        //     res.send(result)
+        // })
+
+
 
 
 
