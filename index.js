@@ -129,23 +129,38 @@ async function run() {
 
         })
 
+        // seller create system 
         app.get('/user/seller/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
             const user = await userCollection.findOne(query)
-            res.send({ isSeller: user?.Role === 'seller' })
+            res.send({ isSeller: user?.Role === 'Seller' })
 
         })
 
-        // all user neoa hoyeche
+        // all seller email
 
-        // app.get('/user', async (req, res) => {
-        //     const role = req.query.Role
-        //     // console.log(role);
-        //     const query = { role: role - 1}
-        //     const result = await userCollection.find(query).toArray()
-        //     res.send(result)
-        // })
+        app.get('/seller', async (req, res) => {
+            // const Role = req.query.Role
+            const query = { Role: 'Seller' }
+            const result = await userCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        // all byers email 
+        app.get('/buyer', async (req, res) => {
+            const query = { Role: 'Buyer' }
+            const result = await userCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        // all user id name 
+        app.delete('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const user = await userCollection.deleteOne(query)
+            res.send(user)
+        });
 
 
 
