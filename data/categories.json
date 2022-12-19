@@ -2,20 +2,49 @@
     {
         "id": "01",
         "name": "vivo",
-        "photo_url": "https://w0.peakpx.com/wallpaper/76/805/HD-wallpaper-vivo-logo-steel-logo-vivo-communication-technology-vivo-smartphones-brands-steel-art-gray-stone-background-creative-art-vivo-emblems.jpg"
+        "photo_url": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGNhcnN8ZW58MHx8MHx8&w=1000&q=80"
         
   
       },
       {
         "id": "02",
         "name": "Readme",
-        "photo_url": "https://fdn.gsmarena.com/imgroot/news/19/01/redmi-logo/-728x314/gsmarena_001.jpg"
+        "photo_url": "https://c4.wallpaperflare.com/wallpaper/746/553/111/chevrolet-camaro-blue-car-speed-sunset-blue-chevrolet-camaro-wallpaper-preview.jpg"
         
       },
       {
         "id": "03",
         "name": "iphone",
-        "photo_url": "https://www.freepnglogos.com/uploads/iphone-logo-17.png"
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/1/11/Freightliner_M2_106_6x4_2014_%2814240376744%29.jpg"
         
       } 
+]
+
+// https://w0.peakpx.com/wallpaper/76/805/HD-wallpaper-vivo-logo-steel-logo-vivo-communication-technology-vivo-smartphones-brands-steel-art-gray-stone-background-creative-art-vivo-emblems.jpg
+// https://fdn.gsmarena.com/imgroot/news/19/01/redmi-logo/-728x314/gsmarena_001.jpg
+
+//  https://www.freepnglogos.com/uploads/iphone-logo-17.png
+
+
+
+[
+  {
+      "id": "01",
+      "name": "Smart Phone",
+      "photo_url": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGNhcnN8ZW58MHx8MHx8&w=1000&q=80"
+      
+
+    },
+    {
+      "id": "02",
+      "name": "Ipad",
+      "photo_url": "https://c4.wallpaperflare.com/wallpaper/746/553/111/chevrolet-camaro-blue-car-speed-sunset-blue-chevrolet-camaro-wallpaper-preview.jpg"
+      
+    },
+    {
+      "id": "03",
+      "name": "Button Mobile",
+      "photo_url": "https://upload.wikimedia.org/wikipedia/commons/1/11/Freightliner_M2_106_6x4_2014_%2814240376744%29.jpg"
+      
+    } 
 ]

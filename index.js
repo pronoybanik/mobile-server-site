@@ -40,15 +40,19 @@ async function run() {
         const productCollection = client.db('mobileSite').collection('products');
         const ordersCollection = client.db('mobileSite').collection('orders');
         const userCollection = client.db('mobileSite').collection('user');
+        const addProductsCollection = client.db('mobileSite').collection('addProducts');
+        const addProductsListCollection = client.db('mobileSite').collection('addProductsList');
 
 
         app.get('/categories', async (req, res) => {
             const query = {}
             const result = await productCategoriesCollection.find(query).toArray()
             // console.log(result);
-            res.send(result)
+            res.send(result);
 
         });
+ 
+        // Our secondHand Product
 
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
@@ -58,6 +62,17 @@ async function run() {
             res.send(products);
 
         });
+
+        // selling products 
+        app.get('/addProducts/:products', async (req, res) => {
+            const product = req.params.products;
+            const query = { product: product }
+            const products = await addProductsCollection.find(query).toArray()
+            res.send(products);
+
+        });
+
+        
 
         app.get('/productsDetails/:id', async (req, res) => {
             const id = req.params.id;
@@ -161,6 +176,33 @@ async function run() {
             const user = await userCollection.deleteOne(query)
             res.send(user)
         });
+
+
+        // add products item data save 
+        app.post('/addProducts', async (req, res) => {
+            const id = req.body;
+            const result = await addProductsCollection.insertOne(id);
+            res.send(result)
+        });
+
+
+        // selling products delete 
+
+        app.delete('/addProducts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const productId = await addProductsCollection.deleteOne(query)
+            res.send(productId)
+        });
+
+        
+         // home page selling card
+        app.get('/ProductsDetail', async (req, res) => {
+            const query = {}
+            const result = await addProductsListCollection.find(query).toArray()
+            res.send(result);
+
+        })
 
 
 
