@@ -44,8 +44,8 @@ async function run() {
         const addProductsCollection = client.db('mobileSite').collection('addProducts');
         const addProductsListCollection = client.db('mobileSite').collection('addProductsList');
         const paymentsCollection = client.db('mobileSite').collection('payments');
-     
-     
+
+
 
         app.get('/categories', async (req, res) => {
             const query = {}
@@ -216,6 +216,7 @@ async function run() {
 
         });
 
+        // payments system;
         app.post("/create-payment-intent", async (req, res) => {
             const booking = req.body;
             console.log(booking);
@@ -234,8 +235,21 @@ async function run() {
             })
         });
 
-
-
+        // payment info store
+        app.post('/payments', async (req, res) => {
+            const payment = req.body;
+            const result = await paymentsCollection.insertOne(payment);
+            const id = payment.bookingId;
+            const filter = { _id: ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.paymentIntent
+                }
+            }
+            const updateResult = await bookingCollection.updateOne(filter, updateDoc)
+            res.send(updateResult);
+        })
 
 
     }
