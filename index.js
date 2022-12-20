@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config();
 const port = process.env.POST || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-
+const stripe = require("stripe")(process.env.STRIPE_ID);
 
 
 app.use(cors());
@@ -35,14 +35,17 @@ function verifyJWT(req, res, next) {
 }
 
 async function run() {
+
     try {
         const productCategoriesCollection = client.db('mobileSite').collection('productCategories');
         const productCollection = client.db('mobileSite').collection('products');
-        const ordersCollection = client.db('mobileSite').collection('orders');
+        const bookingCollection = client.db('mobileSite').collection('orders');
         const userCollection = client.db('mobileSite').collection('user');
         const addProductsCollection = client.db('mobileSite').collection('addProducts');
         const addProductsListCollection = client.db('mobileSite').collection('addProductsList');
-
+        const paymentsCollection = client.db('mobileSite').collection('payments');
+     
+     
 
         app.get('/categories', async (req, res) => {
             const query = {}
@@ -51,7 +54,7 @@ async function run() {
             res.send(result);
 
         });
- 
+
         // Our secondHand Product
 
         app.get('/products/:id', async (req, res) => {
@@ -72,7 +75,7 @@ async function run() {
 
         });
 
-        
+
 
         app.get('/productsDetails/:id', async (req, res) => {
             const id = req.params.id;
@@ -85,9 +88,18 @@ async function run() {
 
         app.post('/booking', async (req, res) => {
             const id = req.body;
-            const result = await ordersCollection.insertOne(id);
+            const result = await bookingCollection.insertOne(id);
             res.send(result)
         });
+
+        // booking id 
+
+        app.get('/booking/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const booking = await bookingCollection.findOne(query)
+            res.send(booking)
+        })
 
         // product GET API
 
@@ -99,7 +111,7 @@ async function run() {
                 return res.status(403).send({ message: 'forbidden access' })
             }
             const query = { email: email }
-            const orders = await ordersCollection.find(query).toArray()
+            const orders = await bookingCollection.find(query).toArray()
             res.send(orders)
 
         });
@@ -108,7 +120,7 @@ async function run() {
         app.delete('/booking/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
-            const bookingId = await ordersCollection.deleteOne(query)
+            const bookingId = await bookingCollection.deleteOne(query)
             res.send(bookingId)
         });
 
@@ -195,17 +207,32 @@ async function run() {
             res.send(productId)
         });
 
-        
-         // home page selling card
+
+        // home page selling card
         app.get('/ProductsDetail', async (req, res) => {
             const query = {}
             const result = await addProductsListCollection.find(query).toArray()
             res.send(result);
 
-        })
+        });
 
+        app.post("/create-payment-intent", async (req, res) => {
+            const booking = req.body;
+            console.log(booking);
+            const price = booking.price;
+            const amount = price * 100;
 
-
+            const paymentIntent = await stripe.paymentIntents.create({
+                currency: 'usd',
+                amount: amount,
+                "payment_method_types": [
+                    "card"
+                ]
+            });
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            })
+        });
 
 
 
